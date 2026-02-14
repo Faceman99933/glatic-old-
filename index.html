@@ -7,7 +7,75 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/theme.css" />
+  <style>
+:root{
+  --bg:#060910;
+  --bg2:#0d1324;
+  --panel:rgba(10,16,30,.82);
+  --line:rgba(88,226,255,.25);
+  --line-strong:rgba(88,226,255,.55);
+  --cyan:#58e2ff;
+  --txt:#e2e8f0;
+  --muted:#8ea1b8;
+  --warn:#ffc857;
+  --danger:#ff5d73;
+  --good:#35d29a;
+  --shadow:0 10px 35px rgba(0,0,0,.38);
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--txt);font-family:Inter,sans-serif;background:radial-gradient(circle at 20% -20%,#203760 0,var(--bg2) 35%,var(--bg) 74%);height:100vh;overflow:hidden}
+.hidden{display:none!important}
+.glass{background:linear-gradient(180deg,rgba(16,27,44,.85),rgba(9,14,25,.85));border:1px solid var(--line);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+.boot-screen,.lock-overlay{position:fixed;inset:0;display:grid;place-items:center;z-index:999;background:radial-gradient(circle at center,rgba(20,40,72,.4),rgba(2,4,8,.95))}
+.boot-card,.modal{width:min(92vw,640px);padding:2rem;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(88,226,255,.09),rgba(4,8,15,.94));text-align:center}
+.logo{font-family:Orbitron,sans-serif;letter-spacing:.2rem;font-size:2.3rem;margin:0 0 .3rem}.subtitle,.boot-status{font-family:'Fira Code',monospace;color:var(--muted);font-size:.8rem}
+.progress-wrap{margin-top:1.5rem;height:12px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.09);border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#fff,var(--cyan));transition:width .1s linear}
+.app-shell{display:grid;grid-template-rows:auto auto auto 1fr auto;height:100vh;padding:.6rem;gap:.5rem}
+.topbar{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:1rem;border-radius:14px}
+.brand h1{margin:0;font-family:Orbitron,sans-serif;letter-spacing:.3rem}.brand span{color:var(--cyan)}.brand small{font-family:'Fira Code',monospace;color:var(--muted);font-size:.65rem}
+.controls{display:flex;gap:.5rem;align-items:center;min-width:0}.controls input{width:min(36vw,470px)}
+.identity{font:700 .7rem 'Fira Code',monospace;padding:.45rem .55rem;border-radius:8px;border:1px solid}.identity.visitor{color:var(--warn);border-color:var(--warn)}.identity.admin{color:var(--good);border-color:var(--good)}
+input,button,select{font:500 .8rem 'Fira Code',monospace} 
+input,select{background:#060a14;border:1px solid var(--line);color:var(--txt);padding:.6rem .7rem;border-radius:8px;outline:none}
+input:focus,select:focus{border-color:var(--line-strong)}
+.btn{background:#141c2e;color:var(--txt);border:1px solid var(--line);padding:.6rem .8rem;border-radius:8px;cursor:pointer;transition:.2s ease}.btn:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(90deg,var(--cyan),#80f3ff);color:#041015;border-color:var(--cyan);font-weight:700}
+.telemetry{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:.5rem;border-radius:12px;gap:.35rem}
+.telemetry-item{background:rgba(255,255,255,.03);border:1px solid var(--line);padding:.45rem .55rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font:.65rem 'Fira Code',monospace;color:var(--muted)}
+.telemetry-item strong{color:var(--txt);font-size:.7rem}
+.tabs{display:flex;gap:.5rem;padding:.45rem;border-radius:12px}.tab{flex:1;background:transparent;border:1px solid transparent;color:var(--muted);padding:.55rem;border-radius:8px;cursor:pointer}.tab.active{color:var(--cyan);border-color:var(--line-strong);background:rgba(88,226,255,.08)}
+.workspace{display:grid;grid-template-columns:330px 1fr;min-height:0;gap:.5rem}
+.sidebar{border-radius:12px;padding:.8rem;display:flex;flex-direction:column;min-height:0}
+.sidebar-head h3{margin:.1rem 0;font-family:Orbitron,sans-serif}.sidebar-head p{margin:.2rem 0 .6rem;color:var(--muted);font: .7rem 'Fira Code',monospace}
+.record-list{list-style:none;margin:0;padding:0;overflow:auto;display:flex;flex-direction:column;gap:.3rem}
+.record-item{padding:.58rem;border-left:3px solid transparent;border-radius:8px;background:rgba(255,255,255,.02);cursor:pointer;transition:.16s ease}
+.record-item:hover{background:rgba(88,226,255,.08)}.record-item.active{border-left-color:var(--cyan);background:rgba(88,226,255,.12)}
+.record-item .title{font-size:.8rem}.record-item .meta{font:.62rem 'Fira Code',monospace;color:var(--muted)}
+.main-pane{min-height:0;overflow:auto}.panel{display:none}.panel.active{display:block}
+.hero{padding:1.2rem;border-radius:12px}.hero h2{font-family:Orbitron,sans-serif;margin-top:.2rem}.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem}
+.hero-grid article{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:.7rem}
+.quick-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.dossier{padding:1rem;border-radius:12px;line-height:1.7}.dossier h2{font-family:Orbitron,sans-serif;margin:.2rem 0}.pill{display:inline-block;padding:.25rem .45rem;border-radius:6px;border:1px solid var(--line);font:.64rem 'Fira Code',monospace;margin-right:.4rem;margin-bottom:.4rem}
+.pill.redacted{color:var(--warn);border-color:var(--warn)}.pill.full{color:var(--good);border-color:var(--good)}
+.muted{color:var(--muted)}
+.status-grid,.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem}
+.status-grid article,.admin-grid article{padding:.8rem;border-radius:12px}
+.metric{margin:.45rem 0}.metric-row{display:flex;justify-content:space-between;font:.75rem 'Fira Code',monospace}
+.meter{height:8px;background:#0f172a;border-radius:100px;overflow:hidden}.meter>span{display:block;height:100%;background:var(--cyan)}
+.sector-cards{display:grid;gap:.35rem}.sector-card{display:flex;justify-content:space-between;background:rgba(255,255,255,.03);padding:.45rem;border-radius:8px;font:.7rem 'Fira Code',monospace}
+.audit-log,.console-output{height:220px;overflow:auto;background:#04070f;border:1px solid var(--line);padding:.6rem;border-radius:8px;font:.7rem 'Fira Code',monospace}
+.row{display:flex;gap:.5rem}.wrap{flex-wrap:wrap}.error{color:var(--danger);font-size:.75rem}
+.range-group{display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:center;margin:.55rem 0}
+.range-group input[type=range]{width:100%}
+.footer{display:flex;justify-content:space-between;padding:.55rem .8rem;border-radius:12px;font:.65rem 'Fira Code',monospace;color:var(--muted)}
+.gate{padding:1.2rem;border-radius:12px;text-align:center}
+mark{background:rgba(255,200,87,.35);color:#fff;padding:0 .2rem;border-radius:3px}
+kbd{background:#0b1220;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:.1rem .35rem;font:600 .7rem 'Fira Code',monospace;color:#c6f7ff}
+@media (max-width:1200px){.telemetry{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1000px){.workspace{grid-template-columns:1fr}.sidebar{max-height:230px}.controls{flex-wrap:wrap}.controls input{width:100%}.telemetry{grid-template-columns:repeat(2,minmax(0,1fr))}.footer{flex-wrap:wrap;gap:.4rem}}
+
+</style>
 </head>
 <body>
   <div id="boot-screen" class="boot-screen">
@@ -161,6 +229,866 @@
     </footer>
   </div>
 
-  <script type="module" src="assets/js/app.js"></script>
+  <script>
+const ARCHIVE_NODES = [
+  {
+    id: 1,
+    title: 'Arrival & Ingress',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Site-Omicron begins with a monumental ingress tunnel carved through polished deepslate and reinforced with obsidian ribs. The descent is deliberate: light fades by design, sea lanterns and glowstone provide low-spectrum guidance, and the architecture creates p... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Site-Omicron begins with a monumental ingress tunnel carved through polished deepslate and reinforced with obsidian ribs. The descent is deliberate: light fades by design, sea lanterns and glowstone provide low-spectrum guidance, and the architecture creates psychological transition from surface freedom to controlled subterranean order. The terminal approach opens into an abyssal dry-dock sequence where swimmers pass pressure seals, piston lifts, and dual-clearance gate checks before entering the Arrival Checkpoint.
+
+The checkpoint combines identity verification, contamination protocol simulation, and mechanical lockdown readiness. Redstone lamps illuminate in authenticated sequence, iron golem patrol alcoves cover every blind angle, and a final double-piston security door grants passage into the Central Spine. This node establishes the doctrine carried across the site: aesthetic intimidation, redundant access control, and operational reliability through vanilla-compatible systems.`,
+  },
+  {
+    id: 2,
+    title: 'Architecture & Ocean Hub',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `The facility is organized as a square perimeter ring around a 300x300 man-made abyssal ocean. This geometry creates constant central visibility, efficient circulation, and progressive security zoning as staff move outward from the waterline. Glass corridors an... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `The facility is organized as a square perimeter ring around a 300x300 man-made abyssal ocean. This geometry creates constant central visibility, efficient circulation, and progressive security zoning as staff move outward from the waterline. Glass corridors and observation lanes preserve oversight while keeping transit deterministic and monitorable.
+
+The central basin hosts curated aquatic ecosystems—axolotls, glow squid, cod, salmon, and controlled drowned sentries—while perimeter defenses include trident launchers, underwater mine grids, and repellent arrays. Colored routing lines in the Central Spine direct personnel into sector branches without breaking surveillance continuity.`,
+  },
+  {
+    id: 3,
+    title: 'The Ingress Descent',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `The Ingress Descent documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpt... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `The Ingress Descent documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 4,
+    title: 'Oceanic Transit Lanes',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Oceanic Transit Lanes documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assum... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Oceanic Transit Lanes documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 5,
+    title: 'Central Command Bridge',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Central Command Bridge documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assu... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Central Command Bridge documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 6,
+    title: 'Lighting & Optics',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Lighting & Optics documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptio... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Lighting & Optics documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 7,
+    title: 'Material Inventory: Deepslate',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Material Inventory: Deepslate documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containme... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Material Inventory: Deepslate documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 8,
+    title: 'Material Inventory: Obsidian',
+    classification: 'PUBLIC',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Material Inventory: Obsidian documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containmen... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Material Inventory: Obsidian documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 9,
+    title: 'Pressure Management',
+    classification: 'RESTRICTED',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Pressure Management documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpt... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Pressure Management documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 10,
+    title: 'Personnel Quarter Logistics',
+    classification: 'RESTRICTED',
+    tags: ['omics', 'infrastructure'],
+    visitorContent: `Personnel Quarter Logistics documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Personnel Quarter Logistics documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 11,
+    title: 'Sector Y Introduction',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Sector Y functions as the medical and recovery heart of BLACKSITE HELIX. Built from quartz, white concrete, waxed copper, and cyan observation glass, it is optimized for visibility, sanitation, and disciplined treatment workflows. Its core mission is survivabi... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Sector Y functions as the medical and recovery heart of BLACKSITE HELIX. Built from quartz, white concrete, waxed copper, and cyan observation glass, it is optimized for visibility, sanitation, and disciplined treatment workflows. Its core mission is survivability under prolonged operations using only vanilla mechanics.
+
+Y-1 intake triages injuries by severity; Y-2 governs brewing and potion reserves; Y-3 monitors post-treatment behavior and readiness; Y-4 enforces sanitation and supply accountability. The philosophy rejects infinite-healing complacency: personnel are trained to use recovery resources strategically, preserving resilience during sieges and containment incidents.`,
+  },
+  {
+    id: 12,
+    title: 'Medical Recovery Wing',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Medical Recovery Wing documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assum... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Medical Recovery Wing documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 13,
+    title: 'Automated Brewing Loops',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Automated Brewing Loops documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment ass... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Automated Brewing Loops documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 14,
+    title: 'Biotic Research Lab',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Biotic Research Lab documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpt... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Biotic Research Lab documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 15,
+    title: 'Surgical Suites',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Surgical Suites documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Surgical Suites documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 16,
+    title: 'The Potion Vault',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `The Potion Vault documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumption... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `The Potion Vault documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 17,
+    title: 'Wound Care & Armor Repair',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Wound Care & Armor Repair documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment a... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Wound Care & Armor Repair documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 18,
+    title: 'Psychological Observation',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Psychological Observation documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment a... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Psychological Observation documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 19,
+    title: 'Infection Control',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Infection Control documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptio... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Infection Control documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 20,
+    title: 'Botanical Garden',
+    classification: 'RESTRICTED',
+    tags: ['medical', 'recovery', 'sector-y'],
+    visitorContent: `Botanical Garden documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumption... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Botanical Garden documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 21,
+    title: 'Sector X Overview',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Sector X is the weapons validation and armament doctrine wing. It is intentionally industrial and dangerous, designed around repeatability, containment, and measurable outcomes. Blast-buffer corridors of obsidian, basalt, and reinforced deepslate isolate test... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Sector X is the weapons validation and armament doctrine wing. It is intentionally industrial and dangerous, designed around repeatability, containment, and measurable outcomes. Blast-buffer corridors of obsidian, basalt, and reinforced deepslate isolate test chambers from habitation sectors.
+
+The X-1 chamber validates explosive configurations, X-2 develops redstone-driven weapon rigs, X-3 runs ballistic and armor penetration baselines, and the central armory vault controls distribution with dual-auth gates and inventory integrity checks. Nothing is fielded site-wide unless it survives multi-cycle reliability trials.`,
+  },
+  {
+    id: 22,
+    title: 'Armory & Munitions',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Armory & Munitions documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpti... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Armory & Munitions documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 23,
+    title: 'TNT Cannon Calibration',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `TNT Cannon Calibration documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assu... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `TNT Cannon Calibration documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 24,
+    title: 'Elytra Flight School',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Elytra Flight School documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assump... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Elytra Flight School documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 25,
+    title: 'Sector X Armament Testing',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Sector X Armament Testing documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment a... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Sector X Armament Testing documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 26,
+    title: 'Redstone Logic Hub',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Redstone Logic Hub documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpti... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Redstone Logic Hub documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 27,
+    title: 'Emergency Lockdown System',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Emergency Lockdown System documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment a... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Emergency Lockdown System documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 28,
+    title: 'Security Patrol Routes',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Security Patrol Routes documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assu... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Security Patrol Routes documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 29,
+    title: 'Drowned Sentry Program',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Drowned Sentry Program documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assu... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Drowned Sentry Program documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 30,
+    title: 'Sector X Supply Chain',
+    classification: 'RESTRICTED',
+    tags: ['security', 'armament', 'sector-x'],
+    visitorContent: `Sector X Supply Chain documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assum... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Sector X Supply Chain documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 31,
+    title: 'Sector Z Experimental Biotics',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Sector Z advances inter-dimensional engineering and end-tech integration. Its architecture uses purpur, end stone, obsidian, and low-frequency lighting to signal controlled alien infrastructure. Projects include compressed storage chains, ender relay communica... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Sector Z advances inter-dimensional engineering and end-tech integration. Its architecture uses purpur, end stone, obsidian, and low-frequency lighting to signal controlled alien infrastructure. Projects include compressed storage chains, ender relay communication, stasis teleport return systems, and dimensional risk isolation.
+
+High-risk modules such as the Void Observation Deck and Rift Hub enforce strict environmental containment and phased authorization. Research doctrine favors stepwise integration over spectacle: every gain in mobility or storage must include explicit fail-safe behavior and documented rollback paths.`,
+  },
+  {
+    id: 32,
+    title: 'End-Tech Integration',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `End-Tech Integration documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assump... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `End-Tech Integration documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 33,
+    title: 'Void Observation Deck',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Void Observation Deck documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assum... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Void Observation Deck documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 34,
+    title: 'Teleportation Studies',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Teleportation Studies documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assum... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Teleportation Studies documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 35,
+    title: 'Chorus Fruit Cultivation',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Chorus Fruit Cultivation documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment as... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Chorus Fruit Cultivation documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 36,
+    title: 'Dimensional Rift Hub',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Dimensional Rift Hub documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assump... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Dimensional Rift Hub documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 37,
+    title: 'Piglin Trading Hall',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Piglin Trading Hall documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpt... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Piglin Trading Hall documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 38,
+    title: 'Basalt Delta Simulation',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `Basalt Delta Simulation documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment ass... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Basalt Delta Simulation documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 39,
+    title: 'The Blue Room',
+    classification: 'RESTRICTED',
+    tags: ['experimental', 'dimensional', 'sector-z'],
+    visitorContent: `The Blue Room documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions,... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `The Blue Room documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 40,
+    title: 'Heavy Containment HCZ',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Heavy Containment (HCZ) is the highest-security operational zone, built for anomalous entities and catastrophic breach resilience. Layered obsidian, crying obsidian dampening structures, and dual-operator gate logic prevent unilateral access and reduce telepor... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Heavy Containment (HCZ) is the highest-security operational zone, built for anomalous entities and catastrophic breach resilience. Layered obsidian, crying obsidian dampening structures, and dual-operator gate logic prevent unilateral access and reduce teleport-capable escape vectors.
+
+Chambers are tailored to entity-specific constraints: vibration isolation for W-01, reinforced vacuum pressure for N-01, sculk-based acoustic monitoring for intrusion detection, and multi-stage lockdown choreography across corridors. HCZ doctrine assumes failure will occur and designs for compartment survival rather than perfect prevention.`,
+  },
+  {
+    id: 41,
+    title: 'W-01 Warden Containment',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `W-01 Warden Containment documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment ass... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `W-01 Warden Containment documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 42,
+    title: 'N-01 Wither Stabilization',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `N-01 Wither Stabilization documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment a... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `N-01 Wither Stabilization documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 43,
+    title: 'Acoustic Sensor Array',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Acoustic Sensor Array documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assum... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Acoustic Sensor Array documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 44,
+    title: 'Hazardous Material Disposal',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Hazardous Material Disposal documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Hazardous Material Disposal documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 45,
+    title: 'Breach Protocol 09',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Breach Protocol 09 documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpti... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Breach Protocol 09 documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 46,
+    title: 'The Obsidian Labyrinth',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `The Obsidian Labyrinth documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assu... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `The Obsidian Labyrinth documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 47,
+    title: 'Entity-00 The Seed',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Entity-00 records foundational world-seed intelligence and geospatial causality. Site placement analysis indicates the facility occupies a high-value nexus between deep-dark structures, stronghold vectors, and dimensional transit lines. Seed data is treated as... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Entity-00 records foundational world-seed intelligence and geospatial causality. Site placement analysis indicates the facility occupies a high-value nexus between deep-dark structures, stronghold vectors, and dimensional transit lines. Seed data is treated as existential metadata: a location key, not merely cartographic trivia.
+
+Access to this node is tightly restricted in operational context because seed disclosure can collapse strategic secrecy. Research teams use the seed archive to model expansion viability, threat emergence corridors, and contingency relocation geometry.`,
+  },
+  {
+    id: 48,
+    title: 'Site Oversight Logs',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Site Oversight Logs documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumpt... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Site Oversight Logs documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 49,
+    title: 'Future Expansion Sector Ω',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Future Expansion Sector Ω documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment a... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Future Expansion Sector Ω documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 50,
+    title: 'Nether & Provincial Division',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `Nether & Provincial Division documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containmen... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `Nether & Provincial Division documents operational design, engineering decisions, and safety doctrine for the corresponding Site-Omicron subsystem. This record includes construction material standards, mobility patterns, redstone integration points, containment assumptions, and long-horizon maintenance constraints required for continuous underground operation.
+
+The node also captures practical field behavior: patrol rhythm, operator responsibilities, failure modes, and recovery steps. Every paragraph is written for implementation realism inside vanilla mechanics, emphasizing reproducibility, layered defense, and sustainability without surface dependency.`,
+  },
+  {
+    id: 51,
+    title: 'The Vault / Seed Archive',
+    classification: 'HIGH-CONTAINMENT',
+    tags: ['containment', 'hcz', 'critical'],
+    visitorContent: `The Vault is the terminal repository of Site-Omicron: a final continuity layer for materials, research, and civilizational restart capability. Its infrastructure combines iron-block bulkheads, netherite-reinforced compartments, and lava-curtain denial systems... [REDACTED: administrative clearance required for full dossier]`,
+    adminContent: `The Vault is the terminal repository of Site-Omicron: a final continuity layer for materials, research, and civilizational restart capability. Its infrastructure combines iron-block bulkheads, netherite-reinforced compartments, and lava-curtain denial systems triggered from director-level controls.
+
+Catalog holdings include exhaustive block and item reserves, enchanted library sets, security-grade equipment caches, and master records of all experiments, breaches, and policy shifts. Dual-key authorization and immutable audit chains ensure that if the facility fails, the archive can still seed reconstruction.`,
+  },
+];
+
+
+
+const ADMIN_PASS = '676767';
+const STORAGE_KEY = 'helix_omicron_state_v3';
+
+const state = {
+  role: 'visitor',
+  tab: 'overview',
+  query: '',
+  activeId: 1,
+  siteState: 'STABLE',
+  metrics: { shell: 99, obsidian: 100, prismarine: 94, energy: 92 },
+  sectors: { Y: 'HEALTHY', X: 'READY', Z: 'WATCH', HCZ: 'SECURED', S: 'STABLE', H: 'FLOWING' },
+  audit: [],
+};
+
+const $ = (id) => document.getElementById(id);
+const now = () => new Date().toLocaleTimeString();
+
+function hydrate() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (saved.metrics) state.metrics = { ...state.metrics, ...saved.metrics };
+    if (saved.sectors) state.sectors = { ...state.sectors, ...saved.sectors };
+    if (saved.siteState) state.siteState = saved.siteState;
+    if (Array.isArray(saved.audit)) state.audit = saved.audit.slice(0, 300);
+  } catch { /* no-op */ }
+}
+
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    metrics: state.metrics,
+    sectors: state.sectors,
+    siteState: state.siteState,
+    audit: state.audit.slice(0, 300),
+  }));
+}
+
+function logAudit(message) {
+  state.audit.unshift(`[${now()}] ${message}`);
+  state.audit = state.audit.slice(0, 300);
+  renderAudit();
+  persist();
+}
+
+function updateTelemetry(visibleCount = ARCHIVE_NODES.length) {
+  $('telemetry-db').textContent = `${ARCHIVE_NODES.length} NODES`;
+  $('telemetry-visible').textContent = `${visibleCount} NODES`;
+  $('telemetry-role').textContent = state.role.toUpperCase();
+  $('telemetry-state').textContent = state.siteState;
+  $('telemetry-active').textContent = String(state.activeId || 0).padStart(4, '0');
+}
+
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+  document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+  $(`panel-${tab}`).classList.add('active');
+  $('sidebar').style.display = tab === 'overview' ? 'none' : 'flex';
+}
+
+function boot() {
+  const progress = $('boot-progress');
+  const status = $('boot-status');
+  const phases = [
+    'Initializing secure archive shell...',
+    'Mapping index topology...',
+    'Attaching role security matrix...',
+    'Binding admin control plane...',
+    'Finalizing Site-Omicron handshake...'
+  ];
+  let pct = 0;
+  const run = () => {
+    pct = Math.min(100, pct + Math.random() * 8.5);
+    progress.style.width = `${pct}%`;
+    status.textContent = phases[Math.min(phases.length - 1, Math.floor((pct / 100) * phases.length))];
+    if (pct < 100) setTimeout(run, 80);
+    else setTimeout(() => $('boot-screen').classList.add('hidden'), 350);
+  };
+  run();
+}
+
+function highlight(text, query) {
+  if (!query) return text;
+  const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${safe})`, 'ig'), '<mark>$1</mark>');
+}
+
+function score(node, query) {
+  if (!query) return 1;
+  const visibleText = state.role === 'admin' ? node.adminContent : node.visitorContent;
+  const payload = `${node.id} ${node.title} ${node.classification} ${node.tags.join(' ')} ${visibleText}`.toLowerCase();
+  if (!payload.includes(query)) return 0;
+  let s = 1;
+  if (node.title.toLowerCase().includes(query)) s += 6;
+  if (node.tags.join(' ').toLowerCase().includes(query)) s += 3;
+  if (`${node.id}` === query) s += 7;
+  return s;
+}
+
+function getFilteredNodes() {
+  const q = state.query.trim().toLowerCase();
+  return ARCHIVE_NODES
+    .map((node) => ({ node, score: score(node, q) }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || a.node.id - b.node.id)
+    .map((entry) => entry.node);
+}
+
+function renderList() {
+  const list = $('record-list');
+  const nodes = getFilteredNodes();
+  list.innerHTML = '';
+  $('result-count').textContent = `${nodes.length}`;
+  updateTelemetry(nodes.length);
+
+  nodes.forEach((node) => {
+    const li = document.createElement('li');
+    li.className = `record-item ${state.activeId === node.id ? 'active' : ''}`;
+    li.innerHTML = `<div class="title">${String(node.id).padStart(2, '0')} — ${highlight(node.title, state.query)}</div>
+      <div class="meta">${node.classification} / ${node.tags.join(', ')}</div>`;
+    li.addEventListener('click', () => openNode(node.id));
+    list.appendChild(li);
+  });
+}
+
+function openNode(id) {
+  const node = ARCHIVE_NODES.find((entry) => entry.id === id);
+  if (!node) return;
+  state.activeId = id;
+  const full = state.role === 'admin';
+  const body = full ? node.adminContent : node.visitorContent;
+  $('dossier-view').innerHTML = `
+    <h2>${node.title}</h2>
+    <div>
+      <span class="pill">NODE ${String(node.id).padStart(4, '0')}</span>
+      <span class="pill">${node.classification}</span>
+      <span class="pill ${full ? 'full' : 'redacted'}">${full ? 'UNREDACTED' : 'REDACTED_VIEW'}</span>
+    </div>
+    <p class="muted">Tags: ${node.tags.join(', ')}</p>
+    ${body.split('\n\n').map((p) => `<p>${highlight(p, state.query)}</p>`).join('')}`;
+
+  renderList();
+  updateTelemetry(getFilteredNodes().length);
+}
+
+function setRole(role) {
+  state.role = role;
+  $('identity-badge').className = `identity ${role}`;
+  $('identity-badge').textContent = role === 'admin' ? 'ADMIN_ACCESS' : 'VISITOR_ACCESS';
+  $('elevate-access').textContent = role === 'admin' ? 'De-escalate' : 'Admin Login';
+  $('admin-locked').classList.toggle('hidden', role === 'admin');
+  $('admin-console').classList.toggle('hidden', role !== 'admin');
+  openNode(state.activeId);
+  logAudit(`ROLE_SWITCH ${role.toUpperCase()}`);
+}
+
+function renderMetrics() {
+  $('metric-bars').innerHTML = Object.entries(state.metrics).map(([key, value]) => {
+    const color = value >= 90 ? 'var(--good)' : value >= 70 ? 'var(--warn)' : 'var(--danger)';
+    return `<div class="metric"><div class="metric-row"><span>${key.toUpperCase()}</span><span>${value}%</span></div><div class="meter"><span style="width:${value}%;background:${color}"></span></div></div>`;
+  }).join('');
+}
+
+function renderSectors() {
+  $('sector-cards').innerHTML = Object.entries(state.sectors)
+    .map(([name, status]) => `<div class="sector-card"><span>${name}</span><strong>${status}</strong></div>`)
+    .join('');
+}
+
+function renderState() {
+  $('site-state').textContent = state.siteState;
+  $('state-description').textContent = {
+    STABLE: 'All systems nominal.',
+    WARNING: 'Partial instability detected; elevated monitoring active.',
+    CRITICAL: 'Breach-level event response in progress.',
+    LOCKDOWN: 'Maximum isolation protocols in effect.',
+  }[state.siteState] || 'Custom state active.';
+  updateTelemetry(getFilteredNodes().length);
+}
+
+function renderAudit() {
+  const html = state.audit.map((line) => `<div>${line}</div>`).join('');
+  $('audit-log').innerHTML = html;
+  $('console-output').innerHTML = html;
+}
+
+function rebuildAdminControls() {
+  $('metric-controls').innerHTML = Object.entries(state.metrics).map(([key, value]) => `
+    <label class="range-group">${key.toUpperCase()} <strong id="m-${key}">${value}%</strong>
+      <input data-metric="${key}" type="range" min="0" max="100" value="${value}" />
+    </label>`).join('');
+
+  document.querySelectorAll('#metric-controls input[type="range"]').forEach((range) => {
+    range.addEventListener('input', () => {
+      if (state.role !== 'admin') return;
+      const key = range.dataset.metric;
+      state.metrics[key] = Number(range.value);
+      $(`m-${key}`).textContent = `${range.value}%`;
+      renderMetrics();
+      logAudit(`METRIC_SET ${key.toUpperCase()}=${range.value}%`);
+      persist();
+    });
+  });
+
+  const options = ['HEALTHY', 'WATCH', 'DEGRADED', 'ALERT', 'OFFLINE', 'SECURED', 'READY', 'FLOWING'];
+  $('sector-controls').innerHTML = Object.entries(state.sectors).map(([name, active]) => `
+    <label class="range-group">SECTOR ${name}
+      <select data-sector="${name}">${options.map((o) => `<option ${o === active ? 'selected' : ''}>${o}</option>`).join('')}</select>
+    </label>`).join('');
+
+  document.querySelectorAll('#sector-controls select').forEach((select) => {
+    select.addEventListener('change', () => {
+      if (state.role !== 'admin') return;
+      state.sectors[select.dataset.sector] = select.value;
+      renderSectors();
+      logAudit(`SECTOR_${select.dataset.sector}=>${select.value}`);
+      persist();
+    });
+  });
+}
+
+function bindEvents() {
+  document.querySelectorAll('.tab').forEach((btn) => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  $('global-search').addEventListener('input', () => {
+    state.query = $('global-search').value;
+    renderList();
+    openNode(state.activeId);
+  });
+
+  $('search-clear').addEventListener('click', () => {
+    $('global-search').value = '';
+    state.query = '';
+    renderList();
+    openNode(state.activeId);
+  });
+
+  const closeModal = () => {
+    $('lock-overlay').classList.add('hidden');
+    $('elevation-pass').value = '';
+    $('elevation-msg').textContent = '';
+  };
+
+  $('elevate-access').addEventListener('click', () => {
+    if (state.role === 'admin') return setRole('visitor');
+    $('lock-overlay').classList.remove('hidden');
+  });
+
+  $('admin-login-cta').addEventListener('click', () => $('lock-overlay').classList.remove('hidden'));
+  $('elevation-cancel').addEventListener('click', closeModal);
+  $('elevation-submit').addEventListener('click', () => {
+    if ($('elevation-pass').value === ADMIN_PASS) {
+      setRole('admin');
+      closeModal();
+    } else {
+      $('elevation-msg').textContent = 'Invalid passcode.';
+    }
+  });
+
+  $('elevation-pass').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('elevation-submit').click();
+    if (e.key === 'Escape') closeModal();
+  });
+
+  document.querySelectorAll('.status-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (state.role !== 'admin') return;
+      state.siteState = btn.dataset.state;
+      renderState();
+      logAudit(`GLOBAL_STATE ${state.siteState}`);
+      persist();
+    });
+  });
+
+  $('console-input').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const cmd = e.target.value.trim().toLowerCase();
+    e.target.value = '';
+    if (!cmd) return;
+    if (cmd === 'help') logAudit('CMD help => help, clear, state <stable|warning|critical|lockdown>, reset');
+    else if (cmd === 'clear') { state.audit = []; renderAudit(); persist(); }
+    else if (cmd.startsWith('state ')) {
+      const target = cmd.split(' ')[1].toUpperCase();
+      if (['STABLE', 'WARNING', 'CRITICAL', 'LOCKDOWN'].includes(target)) {
+        state.siteState = target;
+        renderState();
+        logAudit(`CMD state ${target}`);
+        persist();
+      } else logAudit('CMD ERROR invalid state');
+    } else if (cmd === 'reset') {
+      state.metrics = { shell: 99, obsidian: 100, prismarine: 94, energy: 92 };
+      state.sectors = { Y: 'HEALTHY', X: 'READY', Z: 'WATCH', HCZ: 'SECURED', S: 'STABLE', H: 'FLOWING' };
+      state.siteState = 'STABLE';
+      rebuildAdminControls();
+      renderMetrics();
+      renderSectors();
+      renderState();
+      logAudit('CMD reset applied');
+      persist();
+    } else logAudit(`CMD ERROR unknown: ${cmd}`);
+  });
+
+  document.querySelectorAll('[data-jump-node]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      openNode(Number(btn.dataset.jumpNode));
+      switchTab('database');
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/') {
+      e.preventDefault();
+      $('global-search').focus();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      $('global-search').focus();
+      $('global-search').select();
+    }
+    if (e.key === 'Escape') closeModal();
+  });
+}
+
+function tickClock() {
+  $('clock').textContent = `Server Time: ${new Date().toLocaleTimeString()}`;
+}
+
+function init() {
+  hydrate();
+  boot();
+  bindEvents();
+  rebuildAdminControls();
+  renderMetrics();
+  renderSectors();
+  renderState();
+  renderAudit();
+  renderList();
+  openNode(1);
+  switchTab('overview');
+  tickClock();
+  setInterval(tickClock, 1000);
+  logAudit('SYSTEM INIT COMPLETE');
+}
+
+init();
+</script>
 </body>
 </html>
