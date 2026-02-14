@@ -1,299 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HELIX OS | Site-Omicron Terminal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;800&display=swap');
-    :root {
-      --cyan: #00f2ff;
-      --bg: #06070b;
-      --panel: rgba(16, 18, 24, 0.94);
-      --danger: #ef323d;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: radial-gradient(circle at 20% 20%, #0d1020 0%, var(--bg) 45%, #030304 100%); color: #d1d5db; font-family: Inter, sans-serif; }
-    .terminal-font { font-family: 'Fira Code', monospace; }
-    .cyber-font { font-family: Orbitron, sans-serif; }
-    .glass { background: var(--panel); backdrop-filter: blur(10px); border: 1px solid rgba(0,242,255,.12); }
-    .scanlines::before { content: ''; position: fixed; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(255,255,255,.02) 2px 3px); z-index: 40; }
-    .tab.active { color: var(--cyan); border-color: rgba(0,242,255,.4); background: rgba(0,242,255,.08); }
-    .nav-node.active { border-left-color: var(--cyan); background: linear-gradient(90deg, rgba(0,242,255,.15), transparent); color: white; }
-    .loader-hidden { transform: translateY(-100%); }
-    @media (prefers-reduced-motion: reduce) {
-      * { animation: none !important; transition: none !important; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLACKSITE HELIX // Omicron Interface</title>
+  <link rel="stylesheet" href="assets/css/theme.css" />
 </head>
-<body class="h-screen overflow-hidden scanlines">
-  <div id="loader" class="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-[#ef323d] transition-transform duration-700">
-    <h1 class="cyber-font text-6xl text-white font-black tracking-widest">MOJANG</h1>
-    <p class="terminal-font text-white/90 text-xs tracking-[0.5em] mt-1">STUDIOS</p>
-    <div class="w-[min(90vw,420px)] h-3 border-2 border-white mt-12 bg-black/20"><div id="loaderFill" class="h-full bg-white w-0"></div></div>
-    <p id="loaderText" class="terminal-font mt-4 text-xs text-white">Bootstrapping Site-Omicron...</p>
-  </div>
-
-  <div id="lockout" class="fixed inset-0 hidden z-[999] items-center justify-center bg-black/90 p-6">
-    <div class="glass max-w-md w-full p-8 text-center border-red-500/40">
-      <h2 class="cyber-font text-red-400 text-3xl">EMERGENCY LOCKOUT</h2>
-      <p class="terminal-font text-xs text-gray-400 mt-3">Enter director key to restore controls.</p>
-      <input id="lockInput" type="password" class="mt-6 w-full bg-black border border-red-400/40 p-3 text-center outline-none focus:border-red-400" placeholder="ACCESS KEY" />
-      <button id="unlockBtn" class="mt-4 w-full bg-red-600 hover:bg-red-500 text-white py-3 terminal-font text-xs uppercase">Authenticate</button>
-      <p id="lockMsg" class="terminal-font text-xs text-red-400 mt-3 h-4"></p>
+<body>
+  <div id="boot-overlay" class="overlay">
+    <div class="boot-card">
+      <h1>HELIX OS</h1>
+      <p id="boot-status">Bootstrapping core modules…</p>
+      <div class="progress"><div id="boot-fill"></div></div>
     </div>
   </div>
 
-  <div class="h-full grid grid-rows-[auto_auto_1fr_auto]">
-    <header class="glass border-x-0 border-t-0 px-6 py-4 flex items-center justify-between gap-4">
-      <div>
-        <h1 class="cyber-font text-white text-xl tracking-[0.35em]">HELIX<span class="text-cyan-400">NET</span></h1>
-        <p class="terminal-font text-[10px] text-cyan-900">UNCLASSIFIED TERMINAL INTERFACE</p>
-      </div>
-      <div class="flex gap-2 items-center">
-        <span id="siteStatusChip" class="terminal-font text-[10px] px-2 py-1 rounded border border-green-500/40 text-green-400">SITE_STABLE</span>
-        <input id="searchInput" class="bg-black/40 border border-white/10 focus:border-cyan-500 text-cyan-300 text-xs px-3 py-2 rounded w-48 md:w-72 outline-none terminal-font" placeholder="SEARCH_NODE..." />
-        <button id="lockoutBtn" class="text-xs terminal-font px-3 py-2 border border-red-500/50 text-red-400 rounded hover:bg-red-500/20">LOCKOUT</button>
-      </div>
-    </header>
-
-    <nav class="glass border-x-0 border-t-0 px-3 py-2 flex gap-2 overflow-x-auto terminal-font text-xs">
-      <button class="tab active px-4 py-2 rounded border border-transparent" data-tab="home">HOME</button>
-      <button class="tab px-4 py-2 rounded border border-transparent" data-tab="database">CORE_ARCHIVES</button>
-      <button class="tab px-4 py-2 rounded border border-transparent" data-tab="status">SYSTEM_STATUS</button>
-      <button class="tab px-4 py-2 rounded border border-transparent" data-tab="admin">ADMIN_CONSOLE</button>
-    </nav>
-
-    <div class="min-h-0 grid md:grid-cols-[320px_1fr]">
-      <aside id="sidebar" class="hidden md:flex flex-col min-h-0 glass border-y-0 border-l-0 p-4">
-        <p class="terminal-font text-xs text-cyan-400 mb-3">51 ARCHIVE NODES</p>
-        <div id="fileList" class="min-h-0 overflow-y-auto space-y-1 pr-1"></div>
-      </aside>
-
-      <main id="viewport" class="overflow-y-auto p-5 md:p-8">
-        <section id="homeView" class="max-w-5xl mx-auto space-y-8">
-          <div class="glass rounded-2xl p-8 md:p-12 text-center">
-            <h2 class="cyber-font text-4xl md:text-6xl text-white font-black">SITE-OMICRON INTELLIGENCE</h2>
-            <p class="terminal-font text-cyan-400 text-xs mt-4">FULL DATABASE MIRROR ONLINE</p>
-            <button class="mt-8 px-5 py-3 bg-cyan-500 text-black font-bold text-xs rounded hover:bg-cyan-400" data-open-node="1">ENTER CORE ARCHIVES</button>
-          </div>
-          <div class="grid md:grid-cols-3 gap-4">
-            <button class="glass p-6 rounded-xl text-left hover:border-cyan-400/60" data-open-node="12"><p class="text-2xl">🧪</p><h3 class="text-white mt-2 font-semibold">Medical Files</h3></button>
-            <button class="glass p-6 rounded-xl text-left hover:border-cyan-400/60" data-open-node="27"><p class="text-2xl">🚨</p><h3 class="text-white mt-2 font-semibold">Emergency Protocols</h3></button>
-            <button class="glass p-6 rounded-xl text-left hover:border-cyan-400/60" data-open-node="40"><p class="text-2xl">🛡️</p><h3 class="text-white mt-2 font-semibold">Containment HCZ</h3></button>
-          </div>
-        </section>
-
-        <section id="databaseView" class="hidden max-w-5xl mx-auto">
-          <div id="emptyState" class="glass rounded-2xl p-16 text-center text-gray-500 terminal-font">Select a data node from the left pane.</div>
-          <article id="dossier" class="hidden glass rounded-2xl p-6 md:p-10"></article>
-        </section>
-
-        <section id="statusView" class="hidden max-w-4xl mx-auto grid gap-4 md:grid-cols-2">
-          <div class="glass rounded-xl p-6">
-            <h3 class="cyber-font text-white">Structural Integrity</h3>
-            <div id="metrics" class="space-y-4 mt-4"></div>
-          </div>
-          <div class="glass rounded-xl p-6">
-            <h3 class="cyber-font text-white">Security Signals</h3>
-            <ul id="signals" class="space-y-2 terminal-font text-xs mt-4"></ul>
-          </div>
-        </section>
-
-        <section id="adminView" class="hidden max-w-4xl mx-auto space-y-6">
-          <div id="adminAuth" class="glass rounded-xl p-8 text-center">
-            <h3 class="cyber-font text-2xl text-white">LEVEL 05 AUTH REQUIRED</h3>
-            <input id="adminInput" type="password" class="mt-4 w-full md:w-96 max-w-full bg-black/50 border border-white/20 p-3 text-center outline-none" placeholder="PASSCODE" />
-            <button id="adminBtn" class="mt-4 px-6 py-3 bg-white text-black text-xs font-bold rounded">AUTHENTICATE</button>
-            <p id="adminMsg" class="terminal-font text-xs text-red-400 mt-3 h-4"></p>
-          </div>
-          <div id="adminPanel" class="hidden space-y-4">
-            <div class="glass p-6 rounded-xl flex flex-wrap gap-2">
-              <button class="status-set px-3 py-2 border border-green-500/40 text-green-400 text-xs" data-status="STABLE">STABLE</button>
-              <button class="status-set px-3 py-2 border border-yellow-500/40 text-yellow-400 text-xs" data-status="WARNING">WARNING</button>
-              <button class="status-set px-3 py-2 border border-red-500/40 text-red-400 text-xs" data-status="CRITICAL">CRITICAL</button>
-            </div>
-            <div class="glass p-6 rounded-xl">
-              <div id="adminLog" class="h-48 overflow-y-auto terminal-font text-xs text-green-300 space-y-1"></div>
-              <input id="consoleInput" class="mt-3 w-full bg-black/40 border border-white/10 p-2 terminal-font text-xs" placeholder="ENTER COMMAND (CLEAR, LOCKDOWN, STABLE)" />
-            </div>
-          </div>
-        </section>
-      </main>
+  <header class="topbar panel">
+    <div>
+      <h1>BLACKSITE <span>HELIX</span></h1>
+      <small>Site-Omicron Integrated Command Interface</small>
     </div>
+    <div class="top-controls">
+      <span id="role-badge" class="badge visitor">VISITOR_ACCESS</span>
+      <span id="site-badge" class="badge stable">SITE_STABLE</span>
+      <input id="global-search" placeholder="Search ID / title / tags / dossier text" />
+      <button id="login-open">Admin Login</button>
+    </div>
+  </header>
 
-    <footer class="glass border-x-0 border-b-0 px-6 py-2 text-[10px] terminal-font flex justify-between">
-      <span id="clock">Server Time --:--:--</span><span>Site-Omicron Development Board</span>
-    </footer>
+  <nav class="tabs panel" id="tabs"></nav>
+
+  <div class="layout">
+    <aside class="panel" id="sidebar">
+      <div class="aside-header">
+        <h2>Archive Index</h2>
+        <div id="result-count">0 results</div>
+      </div>
+      <div id="archive-list"></div>
+    </aside>
+
+    <main id="view-root">
+      <section id="view-home" class="panel view">
+        <h2>Welcome to Site-Omicron</h2>
+        <p>This interface exposes archival dossiers, status telemetry, administrative controls, and linked public site documents. Visitor mode is redacted by policy; authenticated admin mode unlocks full records.</p>
+        <div class="card-grid" id="quick-cards"></div>
+        <div class="panel docs">
+          <h3>Included Site Files</h3>
+          <ul>
+            <li><a href="announcement.html" target="_blank">announcement.html</a></li>
+            <li><a href="credits.html" target="_blank">credits.html</a></li>
+            <li><a href="vpn.html" target="_blank">vpn.html</a></li>
+            <li><a href="README.md" target="_blank">README.md</a></li>
+            <li><a href="TOS.txt" target="_blank">TOS.txt</a></li>
+            <li><a href="LICENSE" target="_blank">LICENSE</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="view-archive" class="panel view hidden">
+        <article id="dossier"></article>
+      </section>
+
+      <section id="view-status" class="panel view hidden">
+        <h2>System Status</h2>
+        <div class="status-grid">
+          <div class="panel"><h3>Core Metrics</h3><div id="metrics"></div></div>
+          <div class="panel"><h3>Sector Matrix</h3><div id="sector-matrix"></div></div>
+          <div class="panel"><h3>Audit Stream</h3><div id="audit"></div></div>
+        </div>
+      </section>
+
+      <section id="view-admin" class="panel view hidden">
+        <div id="admin-lock">
+          <h2>Administrator Authentication Required</h2>
+          <p>Password-controlled controls (676767)</p>
+        </div>
+        <div id="admin-console" class="hidden"></div>
+      </section>
+    </main>
   </div>
 
-<script>
-const TITLES = [
-"Arrival & Ingress","Architecture & Ocean Hub","The Ingress Descent","Oceanic Transit Lanes","Central Command Bridge","Lighting & Optics","Material Inventory: Deepslate","Material Inventory: Obsidian","Pressure Management","Personnel Quarter Logistics","Sector Y Introduction","Medical Recovery Wing","Automated Brewing Loops","Biotic Research Lab","Surgical Suites","The Potion Vault","Wound Care & Armor Repair","Psychological Observation","Infection Control","Botanical Garden","Sector X Overview","Armory & Munitions","TNT Cannon Calibration","Elytra Flight School","Sector X Armament Testing","Redstone Logic Hub","Emergency Lockdown System","Security Patrol Routes","Drowned Sentry Program","Sector X Supply Chain","Sector Z Experimental Biotics","End-Tech Integration","Void Observation Deck","Teleportation Studies","Chorus Fruit Cultivation","Dimensional Rift Hub","Piglin Trading Hall","Basalt Delta Simulation","The Blue Room","Heavy Containment HCZ","W-01 Warden Containment","N-01 Wither Stabilization","Acoustic Sensor Array","Hazardous Material Disposal","Breach Protocol 09","The Obsidian Labyrinth","Entity-00 The Seed","Site Oversight Logs","Future Expansion Sector Ω","Nether & Provincial Division","The Vault / Seed Archive"
-];
+  <footer class="panel footer">
+    <span id="clock"></span>
+    <span>UNCLASSIFIED WEB TERMINAL // OMICRON BOARD</span>
+  </footer>
 
-const database = TITLES.map((title, i) => ({
-  id: i + 1,
-  title,
-  content: `Node ${String(i + 1).padStart(2, '0')} details ${title}. This dossier has been reconstructed into a clean, searchable public archive with responsive interface components, stronger state handling, and command-driven controls for testing all interactions.`,
-}));
+  <dialog id="login-modal">
+    <form method="dialog" class="panel">
+      <h3>Authenticate</h3>
+      <input type="password" id="admin-pass" placeholder="Enter admin password" />
+      <div class="modal-actions">
+        <button value="cancel">Cancel</button>
+        <button id="admin-submit" value="default">Login</button>
+      </div>
+      <small id="auth-msg"></small>
+    </form>
+  </dialog>
 
-const app = {
-  status: 'STABLE',
-  selectedId: null,
-  admin: false,
-};
-
-const $ = (id) => document.getElementById(id);
-const views = { home: $('homeView'), database: $('databaseView'), status: $('statusView'), admin: $('adminView') };
-
-function init() {
-  populateNav();
-  bindEvents();
-  renderMetrics();
-  switchTab('home');
-  bootLoader();
-  tickClock();
-  setInterval(tickClock, 1000);
-}
-
-function bindEvents() {
-  document.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
-  document.querySelectorAll('[data-open-node]').forEach(btn => btn.addEventListener('click', () => { switchTab('database'); openFile(Number(btn.dataset.openNode)); }));
-  $('searchInput').addEventListener('input', searchFiles);
-  $('lockoutBtn').addEventListener('click', () => $('lockout').classList.remove('hidden'));
-  $('unlockBtn').addEventListener('click', attemptUnlock);
-  $('lockInput').addEventListener('keydown', (e) => e.key === 'Enter' && attemptUnlock());
-  $('adminBtn').addEventListener('click', validateAdmin);
-  $('adminInput').addEventListener('keydown', (e) => e.key === 'Enter' && validateAdmin());
-  $('consoleInput').addEventListener('keydown', runConsole);
-  document.querySelectorAll('.status-set').forEach(btn => btn.addEventListener('click', () => setSiteStatus(btn.dataset.status)));
-}
-
-function populateNav() {
-  const list = $('fileList');
-  list.innerHTML = '';
-  database.forEach((file) => {
-    const node = document.createElement('button');
-    node.className = 'nav-node w-full text-left p-3 rounded border-l-2 border-transparent terminal-font text-xs text-gray-300 hover:bg-cyan-500/10';
-    node.dataset.title = `${file.id} ${file.title}`.toLowerCase();
-    node.innerHTML = `<span class="text-cyan-500 mr-2">${String(file.id).padStart(2,'0')}</span>${file.title}`;
-    node.addEventListener('click', () => openFile(file.id));
-    list.appendChild(node);
-  });
-}
-
-function switchTab(name) {
-  Object.entries(views).forEach(([k, v]) => v.classList.toggle('hidden', k !== name));
-  $('sidebar').classList.toggle('hidden', !(name === 'database' || name === 'status'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-}
-
-function openFile(id) {
-  const file = database.find(f => f.id === id);
-  if (!file) return;
-  app.selectedId = id;
-  $('emptyState').classList.add('hidden');
-  const dossier = $('dossier');
-  dossier.classList.remove('hidden');
-  dossier.innerHTML = `
-    <header class="border-b border-white/10 pb-5 mb-6">
-      <p class="terminal-font text-xs text-cyan-400">FRAG_ID ${String(id).padStart(4,'0')}</p>
-      <h2 class="cyber-font text-3xl md:text-5xl text-white mt-2">${file.title}</h2>
-    </header>
-    <p class="text-gray-300 leading-8">${file.content}</p>
-    <p class="terminal-font text-xs text-gray-500 mt-8">TIMESTAMP ${new Date().toISOString()}</p>`;
-  document.querySelectorAll('.nav-node').forEach((n, idx) => n.classList.toggle('active', idx + 1 === id));
-  switchTab('database');
-}
-
-function searchFiles() {
-  const q = $('searchInput').value.trim().toLowerCase();
-  document.querySelectorAll('.nav-node').forEach(node => {
-    node.classList.toggle('hidden', !node.dataset.title.includes(q));
-  });
-}
-
-function attemptUnlock() {
-  const good = $('lockInput').value === '676767';
-  $('lockMsg').textContent = good ? '' : 'Invalid key';
-  if (good) $('lockout').classList.add('hidden');
-  $('lockInput').value = '';
-}
-
-function validateAdmin() {
-  app.admin = $('adminInput').value === '676767';
-  $('adminMsg').textContent = app.admin ? '' : 'Access denied';
-  $('adminAuth').classList.toggle('hidden', app.admin);
-  $('adminPanel').classList.toggle('hidden', !app.admin);
-  if (app.admin) log('ACCESS_GRANTED ROOT_LEVEL_05');
-  $('adminInput').value = '';
-}
-
-function runConsole(e) {
-  if (e.key !== 'Enter') return;
-  const cmd = e.target.value.trim().toUpperCase();
-  e.target.value = '';
-  if (!cmd) return;
-  log(cmd);
-  if (cmd === 'CLEAR') $('adminLog').innerHTML = '';
-  else if (cmd === 'LOCKDOWN') setSiteStatus('CRITICAL');
-  else if (cmd === 'STABLE') setSiteStatus('STABLE');
-  else if (cmd === 'WARNING') setSiteStatus('WARNING');
-  else log('ERROR UNKNOWN_COMMAND');
-}
-
-function log(message) {
-  const div = document.createElement('div');
-  div.textContent = `> [${new Date().toLocaleTimeString()}] ${message}`;
-  $('adminLog').appendChild(div);
-  $('adminLog').scrollTop = $('adminLog').scrollHeight;
-}
-
-function setSiteStatus(status) {
-  app.status = status;
-  const chip = $('siteStatusChip');
-  const styles = {
-    STABLE: 'border-green-500/40 text-green-400',
-    WARNING: 'border-yellow-500/40 text-yellow-400',
-    CRITICAL: 'border-red-500/40 text-red-400'
-  };
-  chip.className = `terminal-font text-[10px] px-2 py-1 rounded ${styles[status]}`;
-  chip.textContent = `SITE_${status}`;
-  renderMetrics();
-  log(`STATUS_SET ${status}`);
-}
-
-function renderMetrics() {
-  const base = app.status === 'CRITICAL' ? [65, 72, 40] : app.status === 'WARNING' ? [86, 90, 73] : [99, 100, 94];
-  const names = ['Deepslate Shell', 'Obsidian Reinforcement', 'Prismarine Seal'];
-  $('metrics').innerHTML = base.map((val, i) => `<div><div class="flex justify-between text-xs"><span>${names[i]}</span><span>${val}%</span></div><div class="h-1 bg-white/10 mt-1"><div class="h-full ${val>90?'bg-cyan-400':val>60?'bg-yellow-400':'bg-red-500'}" style="width:${val}%"></div></div></div>`).join('');
-  const signals = app.status === 'CRITICAL'
-    ? [['Turrets','ALERT','bg-red-500'],['Guardian Net','ALERT','bg-red-500'],['HCZ','BREACH','bg-red-500']]
-    : app.status === 'WARNING'
-    ? [['Turrets','CAUTION','bg-yellow-500'],['Guardian Net','STABLE','bg-green-500'],['HCZ','MONITORED','bg-yellow-500']]
-    : [['Turrets','ACTIVE','bg-green-500'],['Guardian Net','STABLE','bg-green-500'],['HCZ','MONITORED','bg-yellow-500']];
-  $('signals').innerHTML = signals.map(([n,t,c]) => `<li class="flex items-center gap-2"><span class="w-2 h-2 rounded-full ${c}"></span>${n}: ${t}</li>`).join('');
-}
-
-function tickClock() { $('clock').textContent = `Server Time ${new Date().toLocaleTimeString()}`; }
-
-function bootLoader() {
-  const fill = $('loaderFill');
-  const text = $('loaderText');
-  let p = 0;
-  const run = () => {
-    p = Math.min(100, p + (Math.random() * 12));
-    fill.style.width = `${p}%`;
-    text.textContent = p < 35 ? 'Synchronizing geometry...' : p < 75 ? 'Rebuilding archive layers...' : 'Finalizing secure handshake...';
-    if (p < 100) setTimeout(run, 90);
-    else setTimeout(() => $('loader').classList.add('loader-hidden'), 350);
-  };
-  run();
-}
-
-window.addEventListener('load', init);
-</script>
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
