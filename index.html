@@ -1,1 +1,166 @@
-<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTp6D2yAn9yaLlvYqxyTCpa2340p-8AdbsjFQDLrgYPNdlTnOsD_MMfRjsqOLScWuxGDBwV6nW4b37-/embed?start=false&loop=false&delayms=3000" frameborder="0" width="1440" height="839" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLACKSITE HELIX | Site-Omicron Systems Interface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/theme.css" />
+</head>
+<body>
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-card">
+      <h1 class="logo">BLACKSITE HELIX</h1>
+      <p class="subtitle">SITE-OMICRON SYSTEMS INTERFACE / v11.7</p>
+      <div class="progress-wrap"><div id="boot-progress" class="progress-fill"></div></div>
+      <p id="boot-status" class="boot-status">Initializing secure archive shell...</p>
+    </div>
+  </div>
+
+  <div id="lock-overlay" class="lock-overlay hidden">
+    <div class="modal glass">
+      <h2>ACCESS ELEVATION</h2>
+      <p>Administrator passcode required for full unredacted archives.</p>
+      <input id="elevation-pass" type="password" placeholder="ENTER 6-DIGIT PASSCODE" />
+      <div class="row">
+        <button id="elevation-submit" class="btn btn-primary">Authenticate</button>
+        <button id="elevation-cancel" class="btn">Cancel</button>
+      </div>
+      <p id="elevation-msg" class="error"></p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <header class="topbar glass">
+      <section class="brand">
+        <h1>HELIX<span>NET</span></h1>
+        <small>UNCLASSIFIED + RESTRICTED OMICRON INTERFACE</small>
+      </section>
+      <section class="controls">
+        <div id="identity-badge" class="identity visitor">VISITOR_ACCESS</div>
+        <input id="global-search" type="search" placeholder="SEARCH DATABASE / TITLES / TAGS / CONTENT" />
+        <button id="search-clear" class="btn">Clear</button>
+        <button id="elevate-access" class="btn btn-primary">Admin Login</button>
+      </section>
+    </header>
+
+    <section class="telemetry glass">
+      <div class="telemetry-item"><span>DATABASE</span><strong id="telemetry-db">51 NODES</strong></div>
+      <div class="telemetry-item"><span>VISIBLE</span><strong id="telemetry-visible">51 NODES</strong></div>
+      <div class="telemetry-item"><span>ROLE</span><strong id="telemetry-role">VISITOR</strong></div>
+      <div class="telemetry-item"><span>THREAT</span><strong id="telemetry-state">STABLE</strong></div>
+      <div class="telemetry-item"><span>ACTIVE NODE</span><strong id="telemetry-active">0001</strong></div>
+    </section>
+
+    <nav class="tabs glass">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="database">Archive Database</button>
+      <button class="tab" data-tab="status">System Status</button>
+      <button class="tab" data-tab="admin">Administration</button>
+    </nav>
+
+    <section class="workspace">
+      <aside id="sidebar" class="sidebar glass">
+        <div class="sidebar-head">
+          <h3>Archive Nodes</h3>
+          <p><span id="result-count">51</span> records</p>
+        </div>
+        <ul id="record-list" class="record-list"></ul>
+      </aside>
+
+      <main class="main-pane" id="main-pane">
+        <section class="panel active" id="panel-overview">
+          <div class="hero glass">
+            <h2>SITE-OMICRON MASTER TERMINAL</h2>
+            <p>Multi-role access, full indexed archive of 51 dossiers, and live infrastructure controls for operational oversight.</p>
+            <div class="hero-grid">
+              <article><h4>Visitor Access</h4><p>Redacted public-safe views for limited intelligence browsing.</p></article>
+              <article><h4>Admin Access</h4><p>Password-gated unredacted archive content and control plane.</p></article>
+              <article><h4>Live Controls</h4><p>Tune structure percentages, sector readiness, and threat state.</p></article>
+              <article><h4>Hotkeys</h4><p><kbd>/</kbd> Search • <kbd>Ctrl+K</kbd> Quick focus • <kbd>Esc</kbd> Close modal</p></article>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <button class="btn btn-primary" data-jump-node="1">Open Node 01</button>
+            <button class="btn" data-jump-node="27">Open Lockdown Doctrine</button>
+            <button class="btn" data-jump-node="51">Open Vault Archive</button>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-database">
+          <article id="dossier-view" class="dossier glass">
+            <p class="muted">Select a node from the sidebar to open dossier details.</p>
+          </article>
+        </section>
+
+        <section class="panel" id="panel-status">
+          <div class="status-grid">
+            <article class="glass">
+              <h3>Global Site State</h3>
+              <p id="site-state">STABLE</p>
+              <div id="state-description" class="muted">All systems nominal.</div>
+            </article>
+            <article class="glass">
+              <h3>Structural Metrics</h3>
+              <div id="metric-bars"></div>
+            </article>
+            <article class="glass">
+              <h3>Sector Readiness</h3>
+              <div id="sector-cards" class="sector-cards"></div>
+            </article>
+            <article class="glass">
+              <h3>Audit Timeline</h3>
+              <div id="audit-log" class="audit-log"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin">
+          <div id="admin-locked" class="glass gate">
+            <h3>Administration Locked</h3>
+            <p>Authenticate with director passcode to access controls.</p>
+            <button id="admin-login-cta" class="btn btn-primary">Authenticate</button>
+          </div>
+
+          <div id="admin-console" class="hidden">
+            <div class="admin-grid">
+              <article class="glass">
+                <h3>Global Status Controls</h3>
+                <div class="row wrap">
+                  <button class="btn status-btn" data-state="STABLE">STABLE</button>
+                  <button class="btn status-btn" data-state="WARNING">WARNING</button>
+                  <button class="btn status-btn" data-state="CRITICAL">CRITICAL</button>
+                  <button class="btn status-btn" data-state="LOCKDOWN">LOCKDOWN</button>
+                </div>
+              </article>
+              <article class="glass">
+                <h3>Live Metric Tuning</h3>
+                <div id="metric-controls"></div>
+              </article>
+              <article class="glass">
+                <h3>Sector Overrides</h3>
+                <div id="sector-controls"></div>
+              </article>
+              <article class="glass">
+                <h3>Command Console</h3>
+                <div id="console-output" class="console-output"></div>
+                <input id="console-input" placeholder="commands: help, clear, state critical, reset" />
+              </article>
+            </div>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <footer class="footer glass">
+      <span id="clock">Server Time: --:--:--</span>
+      <span id="uptime">Uptime: 2401 days</span>
+      <span>BLACKSITE HELIX DEVELOPMENT BOARD</span>
+    </footer>
+  </div>
+
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
