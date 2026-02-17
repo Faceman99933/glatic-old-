@@ -1,1 +1,102 @@
-<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTp6D2yAn9yaLlvYqxyTCpa2340p-8AdbsjFQDLrgYPNdlTnOsD_MMfRjsqOLScWuxGDBwV6nW4b37-/embed?start=false&loop=false&delayms=3000" frameborder="0" width="1440" height="839" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BLACKSITE HELIX // Omicron Interface</title>
+  <link rel="stylesheet" href="assets/css/theme.css" />
+</head>
+<body>
+  <div id="boot-overlay" class="overlay">
+    <div class="boot-card">
+      <h1>HELIX OS</h1>
+      <p id="boot-status">Bootstrapping core modules…</p>
+      <div class="progress"><div id="boot-fill"></div></div>
+    </div>
+  </div>
+
+  <header class="topbar panel">
+    <div>
+      <h1>BLACKSITE <span>HELIX</span></h1>
+      <small>Site-Omicron Integrated Command Interface</small>
+    </div>
+    <div class="top-controls">
+      <span id="role-badge" class="badge visitor">VISITOR_ACCESS</span>
+      <span id="site-badge" class="badge stable">SITE_STABLE</span>
+      <input id="global-search" placeholder="Search ID / title / tags / dossier text" />
+      <button id="login-open">Admin Login</button>
+    </div>
+  </header>
+
+  <nav class="tabs panel" id="tabs"></nav>
+
+  <div class="layout">
+    <aside class="panel" id="sidebar">
+      <div class="aside-header">
+        <h2>Archive Index</h2>
+        <div id="result-count">0 results</div>
+      </div>
+      <div id="archive-list"></div>
+    </aside>
+
+    <main id="view-root">
+      <section id="view-home" class="panel view">
+        <h2>Welcome to Site-Omicron</h2>
+        <p>This interface exposes archival dossiers, status telemetry, administrative controls, and linked public site documents. Visitor mode is redacted by policy; authenticated admin mode unlocks full records.</p>
+        <div class="card-grid" id="quick-cards"></div>
+        <div class="panel docs">
+          <h3>Included Site Files</h3>
+          <ul>
+            <li><a href="announcement.html" target="_blank">announcement.html</a></li>
+            <li><a href="credits.html" target="_blank">credits.html</a></li>
+            <li><a href="vpn.html" target="_blank">vpn.html</a></li>
+            <li><a href="README.md" target="_blank">README.md</a></li>
+            <li><a href="TOS.txt" target="_blank">TOS.txt</a></li>
+            <li><a href="LICENSE" target="_blank">LICENSE</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="view-archive" class="panel view hidden">
+        <article id="dossier"></article>
+      </section>
+
+      <section id="view-status" class="panel view hidden">
+        <h2>System Status</h2>
+        <div class="status-grid">
+          <div class="panel"><h3>Core Metrics</h3><div id="metrics"></div></div>
+          <div class="panel"><h3>Sector Matrix</h3><div id="sector-matrix"></div></div>
+          <div class="panel"><h3>Audit Stream</h3><div id="audit"></div></div>
+        </div>
+      </section>
+
+      <section id="view-admin" class="panel view hidden">
+        <div id="admin-lock">
+          <h2>Administrator Authentication Required</h2>
+          <p>Password-controlled controls (676767)</p>
+        </div>
+        <div id="admin-console" class="hidden"></div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="panel footer">
+    <span id="clock"></span>
+    <span>UNCLASSIFIED WEB TERMINAL // OMICRON BOARD</span>
+  </footer>
+
+  <dialog id="login-modal">
+    <form method="dialog" class="panel">
+      <h3>Authenticate</h3>
+      <input type="password" id="admin-pass" placeholder="Enter admin password" />
+      <div class="modal-actions">
+        <button value="cancel">Cancel</button>
+        <button id="admin-submit" value="default">Login</button>
+      </div>
+      <small id="auth-msg"></small>
+    </form>
+  </dialog>
+
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
